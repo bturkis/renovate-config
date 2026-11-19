@@ -1,0 +1,15 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "description": "default + automerge of the weekly non-major group, only after every status check passed. Use only in repos whose CI runs tests on pull requests.",
+  "extends": ["github>bturkis/renovate-config"],
+  "packageRules": [
+    {
+      "description": "Automerge the grouped non-major PR when all checks are green",
+      "matchUpdateTypes": ["minor", "patch", "digest", "pin", "pinDigest"],
+      "automerge": true,
+      "automergeType": "pr",
+      "platformAutomerge": false,
+      "ignoreTests": false
+    }
+  ]
+}

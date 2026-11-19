@@ -1,0 +1,59 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "description": "Safe defaults: security fixes immediately, weekly grouped non-major PR, separate majors, no automerge.",
+  "extends": [
+    "config:recommended",
+    ":dependencyDashboard",
+    ":semanticCommits",
+    ":timezone(Europe/Istanbul)"
+  ],
+  "schedule": ["before 6am on monday"],
+  "prConcurrentLimit": 5,
+  "prHourlyLimit": 2,
+  "labels": ["dependencies"],
+  "automerge": false,
+  "minimumReleaseAge": "3 days",
+  "osvVulnerabilityAlerts": true,
+  "vulnerabilityAlerts": {
+    "enabled": true,
+    "schedule": ["at any time"],
+    "minimumReleaseAge": null,
+    "addLabels": ["security"]
+  },
+  "lockFileMaintenance": {
+    "enabled": false
+  },
+  "kubernetes": {
+    "managerFilePatterns": ["/(^|/)k8s/.+\\.ya?ml$/"]
+  },
+  "packageRules": [
+    {
+      "description": "One weekly PR per repo for every non-major update",
+      "matchUpdateTypes": ["minor", "patch", "digest", "pin", "pinDigest"],
+      "groupName": "all non-major dependencies",
+      "groupSlug": "all-minor-patch"
+    },
+    {
+      "description": "Majors stay as individual PRs for manual review",
+      "matchUpdateTypes": ["major"],
+      "addLabels": ["major"]
+    },
+    {
+      "description": "Apps: keep package.json ranges in sync with what is installed",
+      "matchManagers": ["npm"],
+      "matchDepTypes": ["dependencies", "devDependencies"],
+      "rangeStrategy": "bump"
+    },
+    {
+      "description": "Rust: update Cargo.lock, touch Cargo.toml only when the range no longer fits",
+      "matchManagers": ["cargo"],
+      "rangeStrategy": "update-lockfile"
+    },
+    {
+      "description": "Own images are versioned by CI (k8s/deployment.yaml), never by Renovate",
+      "matchDatasources": ["docker"],
+      "matchPackageNames": ["/^ghcr\\.io\\/(bturkis|burakturkis)\\//"],
+      "enabled": false
+    }
+  ]
+}
